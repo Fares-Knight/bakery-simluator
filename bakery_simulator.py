@@ -1,34 +1,33 @@
 import numpy as np
 
-def fonctionMax(c,p,pc,pp) :
-    return pc*c+pp*p
+def MAX(dot,PriceX,PriceY) :
+    return PriceX*dot[0]+PriceY*dot[1]
 
-def meilleurPrix(Pc,Pp,F,B,Fc,Fp,Bc,Bp) :
-    x=min(F/Fc,B/Bc)
-    y=min(F/Fp,F/Bp)
-    i=B/Bp
-    j=F/Fp
-    k=B/Bc
-    l=F/Fc
-
-    s1=i/k
-    s2=j/l
-
-    monX=(i-j)/(s1-s2)
-
+def solver(PriceX,PriceY,LimitA,LimitB,Ax,Ay,Bx,By) :
     
-    print ([(x,0),
-            (0,y),
-            (monX,-s2*monX+j)
-             ])
+    #calcul du point minimal sur l'axe X
+    MinXA=LimitA/Ax
+    MinXB=LimitB/Bx
+    MinX=(min(MinXA,MinXB),0)
 
+    #calcul du point minimal sur l'axe Y
+    MinYA=LimitA/Ay
+    MinYB=LimitB/By
+    MinY=(0,min(MinYA,MinYB))
     
-    print ([fonctionMax(x,0,Pc,Pp),
-            fonctionMax(0,y,Pc,Pp),
-            fonctionMax(monX,-s2*monX+j,Pc,Pp)
-             ])
+    #calcul du point d'intersection
 
+    InterX=(MinYB-MinYA)/((MinYB/MinXB)-(MinYA/MinXA))
+    Inter=(InterX,-(MinYB/MinXB)*InterX+MinYB)
+    
+    print ("Les trois points retenus sont "+str(MinX)+ " " +str(MinY)+ " " +str(Inter))
+    print ("Les prix de ces points sont "+str(MAX(MinX,PriceX,PriceY))+" "+str(MAX(MinY,PriceX,PriceY))+" "+str(MAX(Inter,PriceX,PriceY)))
 
+    listPoint=[MinX, MinY, Inter]
+    listPointPrix=[MAX(MinX,PriceX,PriceY),MAX(MinY,PriceX,PriceY),MAX(Inter,PriceX,PriceY)]
 
-print (np.pi)     
-meilleurPrix(1,1.5,10,15,1,1.5,1.7,2.5)
+    best=max(range(len(listPointPrix)), key=listPointPrix.__getitem__)
+
+    print ("La meilleure solution est "+str(listPoint[best]))
+
+solver(1,1.5,10,12,1,1.5,2,1)
